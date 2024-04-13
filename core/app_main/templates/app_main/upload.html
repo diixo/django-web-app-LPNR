@@ -1,0 +1,27 @@
+{% extends "app_main/base.html" %}
+
+{% block content %}
+
+<h1 class="display-5 fw-bold">Upload car image</h1>
+
+<p class="col-md-8 fs-4">Select image to recognize license number plate number</p>
+
+<form action="{% url 'app_main:upload' %}" method="post" enctype="multipart/form-data">
+
+    {% csrf_token %}
+
+    <div class="mb-3">
+        <label class="form-label">Description</label>
+        {{form.description}}
+    </div>
+    
+    <div class="mb-3">
+        <label class="form-label">Picture</label>
+        {{form.path}}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Upload</button>
+
+</form>
+
+{% endblock %}

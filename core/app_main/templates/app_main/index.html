@@ -1,0 +1,17 @@
+{% extends "app_main/base.html" %}
+
+
+{% block content %}
+
+<h1 class="display-5 fw-bold">Hello world from app_main</h1>
+
+<p class="col-md-8 fs-4">Check out the examples below for how you can remix and restyle it to your liking.</p>
+
+<!--app_main:upload is name from url-patterns-->
+<a class="btn btn-primary btn-lg" href="{% url 'app_main:upload' %}">License number recognition</a>
+
+{% endblock %}
+
+
+{% block imgs %}
+{% endblock %}
