@@ -15,7 +15,6 @@ from keras import optimizers
 from keras.models import Sequential
 from keras.preprocessing.image import ImageDataGenerator
 from keras.layers import Dense, Flatten, MaxPooling2D, Dropout, Conv2D
-
 from django.conf import settings
 
 
@@ -208,29 +207,7 @@ def f1score(y, y_pred):
 def custom_f1score(y, y_pred):
     return tf.py_function(f1score, (y, y_pred), tf.double)
 
-################################ create model ##################################
 
-model = Sequential()
-
-model.add(Conv2D(16, (24,24), input_shape=(28, 28, 3), activation='relu', padding='same'))
-
-# model.add(Conv2D(32, (16,16), input_shape=(28, 28, 3), activation='relu', padding='same'))
-# model.add(Conv2D(64, (8,8), input_shape=(28, 28, 3), activation='relu', padding='same'))
-
-model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Dropout(0.4))
-model.add(Flatten())
-model.add(Dense(128, activation='relu'))
-model.add(Dense(37, activation='softmax'))
-
-model.compile(
-    loss='categorical_crossentropy',
-    optimizer=optimizers.Adam(learning_rate=0.00005),
-    metrics=['accuracy'])
-    #metrics=[custom_f1score])
-
-model.summary()
-################################################################################
 
 class stop_training_callback(tf.keras.callbacks.Callback):
     def on_epoch_end(self, epoch, logs={}):
@@ -239,7 +216,31 @@ class stop_training_callback(tf.keras.callbacks.Callback):
 
 callbacks = [stop_training_callback()]
 
-def train_model(model, file_path: str):
+################################################################################
+# create and train model
+def train_model(file_path: str):
+
+    model = Sequential()
+
+    model.add(Conv2D(16, (24,24), input_shape=(28, 28, 3), activation='relu', padding='same'))
+
+    # model.add(Conv2D(32, (16,16), input_shape=(28, 28, 3), activation='relu', padding='same'))
+    # model.add(Conv2D(64, (8,8), input_shape=(28, 28, 3), activation='relu', padding='same'))
+
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Dropout(0.4))
+    model.add(Flatten())
+    model.add(Dense(128, activation='relu'))
+    model.add(Dense(37, activation='softmax'))
+
+    model.compile(
+        loss='categorical_crossentropy',
+        optimizer=optimizers.Adam(learning_rate=0.00005),
+        metrics=['accuracy'])
+        #metrics=[custom_f1score])
+
+    model.summary()
+
     batch_size = 1
     model.fit(
           train_generator,
@@ -251,6 +252,8 @@ def train_model(model, file_path: str):
           callbacks=callbacks)
 
     model.save(filepath=file_path)
+    return model
+################################################################################
 
 def load_model(file_path: str):
     return tf.keras.models.load_model(filepath=file_path)
@@ -263,7 +266,7 @@ def fix_dimension(img):
     return new_img
 
 # Predicting the output string number by contours
-def predict_result(ch_contours):
+def predict_result(ch_contours, model):
     dic = {}
     characters = '#0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
     for i,c in enumerate(characters):
@@ -316,12 +319,12 @@ if __name__ == '__main__':
     # perform model loading before prediction
     file_path = os.path.join(settings.ML_ROOT, "ua-license-plate-recognition-model-37v2.h5")
 
-    #train_model(model, file_path)
+    #model = train_model(file_path)
     model = load_model(file_path)
 
 
     #show predicted string chars number
-    predicted_str = predict_result(chars)
+    predicted_str = predict_result(chars, model)
     predicted_str = str.replace(predicted_str, '#', '')
     print(predicted_str)
 
@@ -332,7 +335,7 @@ if __name__ == '__main__':
         #cv2.imwrite(str(i)+'.bmp', img)
         plt.subplot(3, 4, i+1)
         plt.imshow(img, cmap='gray')
-        plt.title(f'predicted: {predict_result(chars)[i]}')
+        plt.title(f'predicted: {predict_result(chars, model)[i]}')
         plt.axis('off')
     plt.show()
 
