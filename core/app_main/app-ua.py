@@ -16,11 +16,14 @@ from keras.models import Sequential
 from keras.preprocessing.image import ImageDataGenerator
 from keras.layers import Dense, Flatten, MaxPooling2D, Dropout, Conv2D
 
+from django.conf import settings
+
 
 # detects and perfors blurring on the number plate.
 def extract_plate(img, text=''):
+
     # Loads the data required for detecting the license plates from cascade classifier.
-    plate_cascade = cv2.CascadeClassifier('ai-indian-license-plate-recognition-data/haarcascade_russian_plate_number.xml')
+    plate_cascade = cv2.CascadeClassifier(os.path.join(settings.ML_ROOT, 'haarcascade_russian_plate_number.xml'))
 
     plate_img = img.copy()
     roi = img.copy()
@@ -311,7 +314,7 @@ if __name__ == '__main__':
 
 
     # perform model loading before prediction
-    file_path = "build/ua-license-plate-recognition-model-37v2.h5"
+    file_path = os.path.join(settings.ML_ROOT, "ua-license-plate-recognition-model-37v2.h5")
 
     #train_model(model, file_path)
     model = load_model(file_path)
