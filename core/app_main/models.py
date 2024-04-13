@@ -4,7 +4,8 @@ from uuid import uuid4
 
 
 def update_filename(instance, filename):
-    upload_to = 'uploads'
+    upload_to = 'uploaded'
+    upload_to = "" # save to MEDIA_ROOT
     ext = filename.split('.')[-1]
     filename = f"{uuid4().hex}.{ext}"
     return os.path.join(upload_to, filename)
