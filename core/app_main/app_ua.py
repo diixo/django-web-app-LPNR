@@ -186,20 +186,6 @@ def segment_to_contours(image):
 
 ################################################################################
 
-train_datagen = ImageDataGenerator(rescale=1./255, width_shift_range=0.1, height_shift_range=0.1)
-path = 'ai-indian-license-plate-recognition-data/data/data'
-
-train_generator = train_datagen.flow_from_directory(
-        path + '/train',        # this is the target directory
-        target_size=(28, 28),   # all images will be resized to 28x28
-        batch_size=1,
-        class_mode='categorical')
-
-validation_generator = train_datagen.flow_from_directory(
-        path + '/val',          # this is the target directory
-        target_size=(28, 28),   # all images will be resized to 28x28 batch_size=1,
-        class_mode='categorical')
-
 # Metrics for checking the model performance while training
 def f1score(y, y_pred):
     return f1_score(y, tf.math.argmax(y_pred, axis=1), average='micro') 
@@ -219,6 +205,20 @@ callbacks = [stop_training_callback()]
 ################################################################################
 # create and train model
 def train_model(file_path: str):
+
+    train_datagen = ImageDataGenerator(rescale=1./255, width_shift_range=0.1, height_shift_range=0.1)
+    path = 'ai-indian-license-plate-recognition-data/data/data'
+
+    train_generator = train_datagen.flow_from_directory(
+            path + '/train',        # this is the target directory
+            target_size=(28, 28),   # all images will be resized to 28x28
+            batch_size=1,
+            class_mode='categorical')
+
+    validation_generator = train_datagen.flow_from_directory(
+            path + '/val',          # this is the target directory
+            target_size=(28, 28),   # all images will be resized to 28x28 batch_size=1,
+            class_mode='categorical')
 
     model = Sequential()
 
