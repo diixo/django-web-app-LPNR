@@ -256,8 +256,11 @@ def train_model(file_path: str):
     return model
 ################################################################################
 
-def load_model(file_path: str):
-    return tf.keras.models.load_model(filepath=file_path)
+def load_ml_model(filename: str):
+    filepath = str(os.path.join(str(settings.ML_ROOT), filename))
+    model = tf.keras.models.load_model(filepath=filepath)
+    model.summary()
+    return model
 
 ################################################################################
 def fix_dimension(img): 
@@ -324,7 +327,7 @@ def main():
     file_path = "build/ua-license-plate-recognition-model-37v2.h5"
 
     #model = train_model(file_path)
-    model = load_model(file_path)
+    model = load_ml_model(file_path)
 
 
     #show predicted string chars number
