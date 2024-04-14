@@ -3,7 +3,26 @@ from django.conf import settings
 from .forms import PictureForm
 from .models import Picture
 from pathlib import Path
+from .app_ua import extract_plate, load_ml_model, segment_to_contours, predict_result
 import os
+import cv2
+
+
+def recognize_plate_number(filepath: str):
+
+    original = cv2.imread(filepath)
+    output_img, plate = extract_plate(original)
+
+    model = load_ml_model("ua-license-plate-recognition-model-37v2.h5")
+    chars, img_gray, char_rects = segment_to_contours(plate)
+
+    predicted_str = predict_result(chars, model)
+    predicted_str = str.replace(predicted_str, '#', '')
+    print(predicted_str)
+
+    path = Path(filepath)
+    #print(path.stem, path.suffix)
+########################################################################
 
 
 # Create your views here.
@@ -21,8 +40,9 @@ def upload(request):
             form.save()
             saved_filepath = str(form.instance.path)
             
-            saved_filepath = os.path.join(str(settings.MEDIA_ROOT), saved_filepath)
-            print("saved_filepath:", saved_filepath)
+            path_str = str(os.path.join(settings.MEDIA_ROOT, saved_filepath))
+            #print(path_str)
+            recognize_plate_number(path_str)
 
             return redirect(to="app_main:pictures")
 
