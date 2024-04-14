@@ -8,6 +8,7 @@ tensorflow = "==2.13.0"
 matplotlib = "==3.7.1"
 opencv-python = "==4.9.0.80"
 scikit-learn = "==1.2.2"
+django = "==4.2.8"
 
 [dev-packages]
 
