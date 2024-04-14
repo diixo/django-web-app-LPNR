@@ -22,7 +22,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install Dependencies
-      #working-directory: ./core
+      working-directory: .
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
