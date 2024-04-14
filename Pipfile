@@ -1,0 +1,16 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+tensorflow = "==2.13.0"
+matplotlib = "==3.7.1"
+opencv-python = "==4.9.0.80"
+scikit-learn = "==1.2.2"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"
+python_full_version = "3.8.10"
