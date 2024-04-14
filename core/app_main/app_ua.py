@@ -135,8 +135,9 @@ def find_contours(dimensions, img):
             if len(img_res) >= 10: break
             
     # Return characters on ascending order with respect to the x-coordinate (most-left character first)
-
+    plt.title("rectangled extracted plate")
     plt.show()
+
     # arbitrary function that stores sorted list of character indeces
     indices = sorted(range(len(x_cntr_list)), key=lambda k: x_cntr_list[k])
     img_res_copy = []
@@ -144,7 +145,7 @@ def find_contours(dimensions, img):
         img_res_copy.append(img_res[idx])# stores character images according to their index
     img_res = np.array(img_res_copy)
 
-    return img_res
+    return img_res, ii
 
 
 # Find characters in the resulting images
@@ -181,8 +182,8 @@ def segment_to_contours(image):
     plt.show()
 
     # Get contours within cropped license plate
-    char_list = find_contours(dimensions, img_binary_lp)
-    return char_list
+    char_list, char_rects = find_contours(dimensions, img_binary_lp)
+    return char_list, img_binary_lp, cv2.cvtColor(char_rects, cv2.COLOR_BGR2RGB) 
 
 ################################################################################
 
@@ -289,7 +290,7 @@ def predict_result(ch_contours, model):
 
 ################################################################################
 
-if __name__ == '__main__':
+def main():
 
     original = cv2.imread('ai-indian-license-plate-recognition-data/car-3-720.jpg')
     #original = cv2.imread('test/wv-1.jpg')
@@ -302,13 +303,16 @@ if __name__ == '__main__':
 
     # display processed image with plate-rectangle
     display(output_img, 'detected license plate in the input image')
+    cv2.imwrite('build/1-output_img.jpg', output_img)
 
     # display plate-image with plate-rectangle
     display(plate, 'extracted license plate from the image')
+    cv2.imwrite('build/2-plate.jpg', plate)
 
     # display segmented plate to contours
-    chars = segment_to_contours(plate)
-
+    chars, img_gray, char_rects = segment_to_contours(plate)
+    cv2.imwrite('build/3-contour.jpg', img_gray)
+    cv2.imwrite('build/4-rects.jpg', char_rects)
 
     for i in range(len(chars)):
         plt.subplot(1, 10, i+1)
@@ -317,7 +321,7 @@ if __name__ == '__main__':
 
 
     # perform model loading before prediction
-    file_path = os.path.join(settings.ML_ROOT, "ua-license-plate-recognition-model-37v2.h5")
+    file_path = "build/ua-license-plate-recognition-model-37v2.h5"
 
     #model = train_model(file_path)
     model = load_model(file_path)
@@ -344,3 +348,4 @@ if __name__ == '__main__':
     if len(predicted_str) > 4:
         numbered_img, plate = extract_plate(original, predicted_str)
         display(numbered_img, 'recognized license plate number')
+        cv2.imwrite('build/5-numbered.jpg', numbered_img)
