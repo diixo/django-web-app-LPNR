@@ -31,4 +31,5 @@ jobs:
       env:
         PYTHONPATH: ./core
       run: |
+        pwd
         python manage.py test
