@@ -67,7 +67,7 @@ def upload(request):
                 })
 
     form = PictureForm(instance=Picture()) # bind Picture-model to PictureForm
-    return render(request, "app_main/upload.html", context={"title": "upload image", "form": form})
+    return render(request, "app_main/upload.html", context={"title": "upload image", "form": form, "plate_number":""})
 
 def pictures(request):
     imgs = Picture.objects.all()
