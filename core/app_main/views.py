@@ -18,10 +18,26 @@ def recognize_plate_number(filepath: str):
 
     predicted_str = predict_result(chars, model)
     predicted_str = str.replace(predicted_str, '#', '')
-    print(predicted_str)
 
+    #####################
     path = Path(filepath)
-    #print(path.stem, path.suffix)
+
+    # save results:
+    width = original.shape[1]
+    height = original.shape[0]
+    ratio = width / height
+    new_height = 540
+
+    output_img = cv2.resize(output_img, (int(new_height*ratio), new_height), interpolation=cv2.INTER_LINEAR)
+
+    output_files = [ path.stem + "-1.jpg", path.stem + "-2.jpg", path.stem + "-3.jpg", path.stem + "-4.jpg"]
+
+    cv2.imwrite(os.path.join(settings.MEDIA_ROOT, output_files[0]), output_img)
+    cv2.imwrite(os.path.join(settings.MEDIA_ROOT, output_files[1]), plate)
+    cv2.imwrite(os.path.join(settings.MEDIA_ROOT, output_files[2]), img_gray)
+    cv2.imwrite(os.path.join(settings.MEDIA_ROOT, output_files[3]), char_rects)
+
+    return predicted_str.upper(), output_files
 ########################################################################
 
 
@@ -41,14 +57,19 @@ def upload(request):
             saved_filepath = str(form.instance.path)
             
             path_str = str(os.path.join(settings.MEDIA_ROOT, saved_filepath))
-            #print(path_str)
-            recognize_plate_number(path_str)
 
-            return redirect(to="app_main:pictures")
+            number_str, imgs = recognize_plate_number(path_str)
+
+            return render(request, "app_main/upload.html", context = {
+                "title": "upload image", 
+                "form": PictureForm(instance=Picture()), 
+                "imgs": imgs, "media":settings.MEDIA_URL, "plate_number":number_str
+                })
 
     form = PictureForm(instance=Picture()) # bind Picture-model to PictureForm
     return render(request, "app_main/upload.html", context={"title": "upload image", "form": form})
 
 def pictures(request):
     imgs = Picture.objects.all()
-    return render(request, "app_main/pictures.html", context={"title": "pictures output", "pictures": imgs, "media":settings.MEDIA_URL})
+    return render(request, "app_main/pictures.html", 
+        context={"title": "pictures output", "pictures": imgs, "media":settings.MEDIA_URL})

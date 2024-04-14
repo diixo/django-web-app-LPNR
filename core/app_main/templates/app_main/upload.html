@@ -25,3 +25,15 @@
 </form>
 
 {% endblock %}
+
+{% block imgs %}
+    {% for img in imgs %}
+    <div class="row">
+        <figure class="figure">
+            <img src="{{media}}{{img}}" class="figure-img img-fluid rounded" 
+                alt="square placeholder img with rounded corners in a figure.">
+            <h3>{{plate_number}}</h3>
+        </figure>
+    </div>
+    {% endfor %}
+{% endblock %}
