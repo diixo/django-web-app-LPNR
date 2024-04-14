@@ -29,7 +29,7 @@ jobs:
     - name: Run Tests
       working-directory: ./core
       env:
-        PYTHONPATH: ./core
+        PYTHONPATH: .
       run: |
         pwd
         python manage.py test
