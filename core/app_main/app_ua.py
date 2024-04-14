@@ -119,7 +119,7 @@ def find_contours(dimensions, img):
                 char = cv2.resize(char, (22, 42), interpolation=cv2.INTER_LINEAR_EXACT)
             
             cv2.rectangle(ii, (intX, intY), (intWidth + intX, intY + intHeight), (50,21,200), 2)
-            plt.imshow(ii, cmap='gray')
+            #plt.imshow(ii, cmap='gray')
 
             # Make result formatted for classification: invert colors
             char = cv2.subtract(255, char)
@@ -135,8 +135,8 @@ def find_contours(dimensions, img):
             if len(img_res) >= 10: break
             
     # Return characters on ascending order with respect to the x-coordinate (most-left character first)
-    plt.title("rectangled extracted plate")
-    plt.show()
+    #plt.title("rectangled extracted plate")
+    #plt.show()
 
     # arbitrary function that stores sorted list of character indeces
     indices = sorted(range(len(x_cntr_list)), key=lambda k: x_cntr_list[k])
@@ -177,9 +177,9 @@ def segment_to_contours(image):
                 LP_WIDTH/8,
                 LP_HEIGHT/3,
                 2*LP_HEIGHT/3]
-    plt.imshow(img_binary_lp, cmap='gray')
-    plt.title("original plate contour (binary)")
-    plt.show()
+    # plt.imshow(img_binary_lp, cmap='gray')
+    # plt.title("original plate contour (binary)")
+    # plt.show()
 
     # Get contours within cropped license plate
     char_list, char_rects = find_contours(dimensions, img_binary_lp)
